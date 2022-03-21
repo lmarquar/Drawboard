@@ -4,6 +4,7 @@
 int main(void)
 {
 
+    int a;
 //	errorcheck missing
 	printf("something");
 	create_prog();

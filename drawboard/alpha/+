@@ -1,0 +1,99 @@
+" An example for a vimrc file.
+"
+" Maintainer:	Bram Moolenaar <Bram@vim.org>
+" Last change:	2019 Jan 26
+"
+" To use it, copy it to
+"     for Unix and OS/2:  ~/.vimrc
+"	      for Amiga:  s:.vimrc
+"  for MS-DOS and Win32:  $VIM\_vimrc
+"	    for OpenVMS:  sys$login:.vimrc
+
+" When started as "evim", evim.vim will already have done these settings, bail
+" out.
+
+
+if v:progname =~? "evim"
+  finish
+endif
+
+" Get the defaults that most users want.
+source $VIMRUNTIME/defaults.vim
+
+if has("vms")
+  set nobackup		" do not keep a backup file, use versions instead
+else
+  set backup		" keep a backup file (restore to previous version)
+  if has('persistent_undo')
+    set undofile	" keep an undo file (undo changes after closing)
+  endif
+endif
+
+if &t_Co > 2 || has("gui_running")
+  " Switch on highlighting the last used search pattern.
+  set hlsearch
+endif
+
+" Put these in an autocmd group, so that we can delete them easily.
+augroup vimrcEx
+  au!
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+augroup END
+
+" Add optional packages.
+"
+" The matchit plugin makes the % command work better, but it is not backwards
+" compatible.
+" The ! means the package won't be loaded right away but when plugins are
+" loaded during initialization.
+if has('syntax') && has('eval')
+  packadd! matchit
+endif
+
+
+"<lmarquar> save backups in seperate folder
+"sets backup either to tmp in current folder if existent or to ~/tmp if not
+set undofile 
+set undodir=./tmp,~/tmp
+set backupdir=./tmp,~/tmp
+set directory=./tmp,~/tmp
+
+set softtabstop=4
+set shiftwidth=4
+
+set modeline
+set modelines=10
+
+set viminfo='1000,<100,f1,s10,h
+colorscheme mine
+set background=dark
+set autowrite
+
+"mappings 1: insert comment, 2: delete comment, 3: Entf
+function! Mapslash()
+    norm! mo
+    norm! 0vly
+    let A = getreg("")
+    echo A
+    if (assert_equal(A, '//'))
+	norm! 0i//
+	norm! <CR>
+	norm! w`oll
+    else
+	norm! 0vld`ohh
+    endif
+endfunction
+map  :call Mapslash()<CR>
+imap  <Del>
+map <C-@> :!sudo ctags -R -f ~/.vim/systags -a .
+set path+=/usr/local/include
+"sets ability to open man pages with :Man
+runtime! ftplugin/man.vim
+
+"allowing <Ctrl-x> <Ctrl-o>
+filetype plugin on
+set tags+=~/.vim/systags
+
+"</lmarquar>
